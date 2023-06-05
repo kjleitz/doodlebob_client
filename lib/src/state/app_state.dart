@@ -1,10 +1,10 @@
-import 'package:doodlebob_client/src/utilities/for_ref_columnize.dart';
 import "package:doodlebob_client/src/utilities/debounce.dart";
 import "package:english_words/english_words.dart";
 import "package:flutter/material.dart";
 
 import "../entities/label_data.dart";
 import "../schemata/notes.dart";
+import "../schemata/users.dart";
 
 List<LabelData> generateDummyLabels() {
   return const [
@@ -20,6 +20,11 @@ List<LabelData> generateDummyLabels() {
     LabelData(id: 10, name: "Song"),
     LabelData(id: 11, name: "TODO"),
     LabelData(id: 12, name: "Writing"),
+    LabelData(id: 13, name: "Thoughts"),
+    LabelData(id: 14, name: "Band name"),
+    LabelData(id: 15, name: "Aliens"),
+    LabelData(id: 16, name: "Medicine"),
+    LabelData(id: 17, name: "Build"),
   ];
 }
 
@@ -145,6 +150,8 @@ class AppState extends ChangeNotifier {
   var searchText = "";
   var currentDestinationIndex = 0;
   LabelData? currentLabel;
+  UserResource? currentUser;
+  NoteResource? currentNote;
 
   // TODO: remove test data
   var labels = generateDummyLabels();
@@ -228,6 +235,11 @@ class AppState extends ChangeNotifier {
 
   void setCurrentDestinationIndex(int selectedIndex) {
     currentDestinationIndex = selectedIndex;
+    notifyListeners();
+  }
+
+  void setCurrentNote(NoteResource selectedNote) {
+    currentNote = selectedNote;
     notifyListeners();
   }
 

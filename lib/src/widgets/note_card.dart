@@ -1,18 +1,20 @@
 import "package:flutter/material.dart";
 
+import "../schemata/notes.dart";
+
 class NoteCard extends StatelessWidget {
-  final String title;
-  final String body;
+  final NoteResource note;
 
   const NoteCard({
     super.key,
-    required this.title,
-    required this.body,
+    required this.note,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final title = note.attributes.title;
+    final body = note.attributes.body;
 
     return Card(
       child: Padding(

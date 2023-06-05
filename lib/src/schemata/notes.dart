@@ -51,14 +51,14 @@ typedef NoteResource = ({
 
 typedef NoteCreateResource = ({
   String type, // "notes"
-  NoteAttributes attributes,
+  NoteCreateAttributes attributes,
   NoteRelationships? relationships,
 });
 
 typedef NoteUpdateResource = ({
   String? id,
   String type, // "notes"
-  NoteAttributes attributes,
+  NoteUpdateAttributes attributes,
   NoteRelationships? relationships,
 });
 

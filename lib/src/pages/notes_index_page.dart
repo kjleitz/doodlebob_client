@@ -1,5 +1,7 @@
 import "dart:math";
 
+import "package:doodlebob_client/src/layouts/notes_list_layout.dart";
+import "package:doodlebob_client/src/pages/notes_show_page.dart";
 import "package:doodlebob_client/src/state/app_state.dart";
 import "package:flutter/material.dart";
 import "package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart";
@@ -8,16 +10,16 @@ import "package:provider/provider.dart";
 import "../entities/label_data.dart";
 import "../widgets/note_card.dart";
 
-class NotesPage extends StatefulWidget {
+class NotesIndexPage extends StatefulWidget {
   final LabelData? labelData;
 
-  const NotesPage({super.key, this.labelData});
+  const NotesIndexPage({super.key, this.labelData});
 
   @override
-  State<NotesPage> createState() => _NotesPageState();
+  State<NotesIndexPage> createState() => _NotesIndexPageState();
 }
 
-class _NotesPageState extends State<NotesPage> {
+class _NotesIndexPageState extends State<NotesIndexPage> {
   var isLoadingNotes = false;
   var attemptedToPopulateNotes = false;
 
@@ -28,25 +30,36 @@ class _NotesPageState extends State<NotesPage> {
     final notes = appState.notes;
     final labelData = widget.labelData;
 
+    print("=== ${widget.key} ===");
+    // print("isLoadingNotes: $isLoadingNotes");
+    // print("currentLabel: $currentLabel");
+    // print("notes.isEmpty: ${notes.isEmpty}");
+    // print("attemptedToPopulateNotes: $attemptedToPopulateNotes");
     if (!isLoadingNotes &&
         (currentLabel?.name != labelData?.name ||
             notes.isEmpty && !attemptedToPopulateNotes)) {
       if (labelData == null) {
+        print("populating... (without label)");
         populateNotes(appState);
       } else {
+        print("populating... (with label)");
         populateNotesForLabel(labelData, appState);
       }
+    } else {
+      print("not populating");
     }
 
     if (isLoadingNotes) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Loading notes..."),
-            SizedBox(height: 16),
-            CircularProgressIndicator(semanticsLabel: "Loading notes..."),
-          ],
+      return const NotesListLayout(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Loading notes..."),
+              SizedBox(height: 16),
+              CircularProgressIndicator(semanticsLabel: "Loading notes..."),
+            ],
+          ),
         ),
       );
     }
@@ -56,19 +69,30 @@ class _NotesPageState extends State<NotesPage> {
     double minCardWidth = 200.0;
     int columnCount = max(width ~/ minCardWidth, 1);
 
-    return MasonryGridView.count(
-      crossAxisCount: columnCount,
-      mainAxisSpacing: 4,
-      crossAxisSpacing: 4,
-      itemCount: notes.length,
-      itemBuilder: (context, index) {
-        var note = notes[index];
-        return NoteCard(
-          key: ValueKey(note.id),
-          title: note.attributes.title,
-          body: note.attributes.body,
-        );
-      },
+    return NotesListLayout(
+      child: MasonryGridView.count(
+        crossAxisCount: columnCount,
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        itemCount: notes.length,
+        itemBuilder: (context, index) {
+          var note = notes[index];
+          return GestureDetector(
+            child: NoteCard(
+              key: ValueKey(note.id),
+              note: note,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) => NotesShowPage(note: note),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
